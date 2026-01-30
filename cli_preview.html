@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kookcompas CLI Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #00d9ff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .terminal-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .terminal {
+            background: #0d1117;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .terminal-header {
+            background: #21262d;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .btn-red { background: #ff5f56; }
+        .btn-yellow { background: #ffbd2e; }
+        .btn-green { background: #27c93f; }
+
+        .terminal-title {
+            color: #8b949e;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+
+        .terminal-body {
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 400px;
+        }
+
+        .header-line {
+            color: #58a6ff;
+            font-weight: bold;
+        }
+
+        .menu-item {
+            color: #c9d1d9;
+        }
+
+        .menu-number {
+            color: #7ee787;
+            font-weight: bold;
+        }
+
+        .profile-label {
+            color: #8b949e;
+        }
+
+        .profile-value {
+            color: #ffa657;
+        }
+
+        .prompt {
+            color: #7ee787;
+        }
+
+        .user-input {
+            color: #fff;
+            background: #30363d;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .ai-thinking {
+            color: #8b949e;
+            font-style: italic;
+        }
+
+        .recipe-title {
+            color: #ff7b72;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .recipe-meta {
+            color: #8b949e;
+        }
+
+        .recipe-section {
+            color: #d2a8ff;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .ingredient {
+            color: #7ee787;
+        }
+
+        .step-number {
+            color: #ffa657;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #3fb950;
+        }
+
+        .section-title {
+            color: #58a6ff;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 5px;
+            margin: 15px 0 10px 0;
+        }
+
+        .description {
+            text-align: center;
+            color: #8b949e;
+            margin: 10px 0 20px 0;
+            font-size: 12px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #58a6ff;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .divider {
+            color: #30363d;
+        }
+    </style>
+</head>
+<body>
+    <h1>Kookcompas - CLI Preview</h1>
+    <p class="description">Zo ziet de applicatie eruit in de terminal</p>
+
+    <div class="terminal-container">
+
+        <!-- Hoofdmenu -->
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-btn btn-red"></div>
+                <div class="terminal-btn btn-yellow"></div>
+                <div class="terminal-btn btn-green"></div>
+                <span class="terminal-title">Kookcompas - Hoofdmenu</span>
+            </div>
+            <div class="terminal-body">
+                <div class="header-line">========================================</div>
+                <div class="header-line">      KOOKCOMPAS v1.0.0</div>
+                <div class="header-line">========================================</div>
+                <br>
+                <div class="profile-label">Jouw profiel:</div>
+                <div><span class="profile-label">- Allergenen:</span> <span class="profile-value">noten, lactose</span></div>
+                <div><span class="profile-label">- Dieet:</span> <span class="profile-value">vegetarisch</span></div>
+                <br>
+                <div class="section-title">Hoofdmenu:</div>
+                <div class="menu-item"><span class="menu-number">1.</span> Recept genereren</div>
+                <div class="menu-item"><span class="menu-number">2.</span> Mijn allergenen</div>
+                <div class="menu-item"><span class="menu-number">3.</span> Mijn dieetwensen</div>
+                <div class="menu-item"><span class="menu-number">4.</span> Opgeslagen recepten</div>
+                <div class="menu-item"><span class="menu-number">0.</span> Afsluiten</div>
+                <br>
+                <div><span class="prompt">Kies een optie:</span> <span class="cursor"></span></div>
+            </div>
+        </div>
+
+        <!-- Recept Genereren -->
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-btn btn-red"></div>
+                <div class="terminal-btn btn-yellow"></div>
+                <div class="terminal-btn btn-green"></div>
+                <span class="terminal-title">Kookcompas - Recept Genereren</span>
+            </div>
+            <div class="terminal-body">
+                <div class="section-title">--- Recept Genereren ---</div>
+                <br>
+                <div><span class="prompt">Welke ingredienten heb je?</span></div>
+                <div><span class="profile-label">(gescheiden door komma)</span></div>
+                <br>
+                <div>> <span class="user-input">pasta, tomaat, ui, knoflook, basilicum</span></div>
+                <br>
+                <div class="ai-thinking">Even denken...</div>
+                <br>
+                <div class="divider">========================================</div>
+                <div class="recipe-title">PASTA POMODORO MET BASILICUM</div>
+                <div class="divider">========================================</div>
+                <div class="recipe-meta">Categorie: Diner</div>
+                <div class="recipe-meta">Bereidingstijd: 25 minuten</div>
+                <div class="recipe-meta">Personen: 2</div>
+                <br>
+                <div class="recipe-section">INGREDIENTEN:</div>
+                <div class="ingredient">- 250g pasta (penne of spaghetti)</div>
+                <div class="ingredient">- 4 rijpe tomaten</div>
+                <div class="ingredient">- 1 ui, gesnipperd</div>
+                <div class="ingredient">- 2 teentjes knoflook</div>
+                <div class="ingredient">- Handvol verse basilicum</div>
+                <div class="ingredient">- 2 el olijfolie</div>
+                <div class="ingredient">- Zout en peper</div>
+            </div>
+        </div>
+
+        <!-- Recept Bereiding -->
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-btn btn-red"></div>
+                <div class="terminal-btn btn-yellow"></div>
+                <div class="terminal-btn btn-green"></div>
+                <span class="terminal-title">Kookcompas - Bereiding</span>
+            </div>
+            <div class="terminal-body">
+                <div class="recipe-section">BEREIDING:</div>
+                <div><span class="step-number">1.</span> Zet een grote pan water op en breng aan de kook</div>
+                <div><span class="step-number">2.</span> Voeg zout toe en kook de pasta volgens verpakking</div>
+                <div><span class="step-number">3.</span> Verhit olijfolie in een koekenpan</div>
+                <div><span class="step-number">4.</span> Fruit de ui 3 minuten op middelhoog vuur</div>
+                <div><span class="step-number">5.</span> Voeg de knoflook toe, bak 1 minuut</div>
+                <div><span class="step-number">6.</span> Snijd tomaten in blokjes, voeg toe aan de pan</div>
+                <div><span class="step-number">7.</span> Laat 10 minuten zachtjes sudderen</div>
+                <div><span class="step-number">8.</span> Giet de pasta af, bewaar beetje kookvocht</div>
+                <div><span class="step-number">9.</span> Meng pasta door de saus</div>
+                <div><span class="step-number">10.</span> Scheur basilicum erbij, breng op smaak</div>
+                <br>
+                <div class="divider">========================================</div>
+                <br>
+                <div><span class="prompt">Wil je dit recept opslaan?</span> (ja/nee)</div>
+                <div>> <span class="user-input">ja</span></div>
+                <br>
+                <div class="success">Recept opgeslagen als favoriet.</div>
+                <br>
+                <div class="profile-label">Druk op Enter om door te gaan...</div>
+            </div>
+        </div>
+
+        <!-- Allergenen Menu -->
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-btn btn-red"></div>
+                <div class="terminal-btn btn-yellow"></div>
+                <div class="terminal-btn btn-green"></div>
+                <span class="terminal-title">Kookcompas - Allergenen</span>
+            </div>
+            <div class="terminal-body">
+                <div class="section-title">--- Mijn Allergenen ---</div>
+                <br>
+                <div class="profile-label">Huidige allergenen:</div>
+                <div class="menu-item"><span class="menu-number">1.</span> noten</div>
+                <div class="menu-item"><span class="menu-number">2.</span> lactose</div>
+                <div class="menu-item"><span class="menu-number">3.</span> gluten</div>
+                <br>
+                <div class="section-title">Opties:</div>
+                <div class="menu-item"><span class="menu-number">1.</span> Allergie toevoegen</div>
+                <div class="menu-item"><span class="menu-number">2.</span> Allergie verwijderen</div>
+                <div class="menu-item"><span class="menu-number">0.</span> Terug naar hoofdmenu</div>
+                <br>
+                <div><span class="prompt">Kies een optie:</span> <span class="user-input">1</span></div>
+                <br>
+                <div><span class="prompt">Naam van de allergie:</span> <span class="user-input">ei</span></div>
+                <div><span class="prompt">Beschrijving (optioneel):</span> <span class="user-input">Eieren en ei-producten</span></div>
+                <br>
+                <div class="success">Allergie 'ei' toegevoegd aan je profiel.</div>
+            </div>
+        </div>
+
+        <!-- Opgeslagen Recepten -->
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-btn btn-red"></div>
+                <div class="terminal-btn btn-yellow"></div>
+                <div class="terminal-btn btn-green"></div>
+                <span class="terminal-title">Kookcompas - Opgeslagen Recepten</span>
+            </div>
+            <div class="terminal-body">
+                <div class="section-title">--- Opgeslagen Recepten ---</div>
+                <br>
+                <div class="profile-label">ID   Titel                      Categorie   Tijd</div>
+                <div class="divider">---  -------------------------  ----------  ----</div>
+                <div class="menu-item"><span class="menu-number">1</span>    Pasta Pomodoro             Diner       25 min</div>
+                <div class="menu-item"><span class="menu-number">2</span>    Groentecurry               Diner       35 min</div>
+                <div class="menu-item"><span class="menu-number">3</span>    Havermout Ontbijt          Ontbijt     10 min</div>
+                <div class="menu-item"><span class="menu-number">4</span>    Caprese Salade             Lunch       15 min</div>
+                <div class="menu-item"><span class="menu-number">5</span>    Smoothie Bowl              Ontbijt     5 min</div>
+                <br>
+                <div class="section-title">Opties:</div>
+                <div class="menu-item"><span class="menu-number">1.</span> Recept details bekijken</div>
+                <div class="menu-item"><span class="menu-number">2.</span> Recept zoeken</div>
+                <div class="menu-item"><span class="menu-number">3.</span> Recept verwijderen</div>
+                <div class="menu-item"><span class="menu-number">0.</span> Terug naar hoofdmenu</div>
+                <br>
+                <div><span class="prompt">Kies een optie:</span> <span class="cursor"></span></div>
+            </div>
+        </div>
+
+        <!-- Zoeken -->
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-btn btn-red"></div>
+                <div class="terminal-btn btn-yellow"></div>
+                <div class="terminal-btn btn-green"></div>
+                <span class="terminal-title">Kookcompas - Zoeken</span>
+            </div>
+            <div class="terminal-body">
+                <div class="section-title">--- Recept Zoeken ---</div>
+                <br>
+                <div><span class="prompt">Zoekterm:</span> <span class="user-input">pasta</span></div>
+                <br>
+                <div class="profile-label">Gevonden recepten:</div>
+                <br>
+                <div class="divider">-------------------------------------------</div>
+                <div class="menu-item"><span class="menu-number">1</span>  <span class="recipe-title">Pasta Pomodoro</span></div>
+                <div class="recipe-meta">   Categorie: Diner | Tijd: 25 min</div>
+                <div class="divider">-------------------------------------------</div>
+                <div class="menu-item"><span class="menu-number">7</span>  <span class="recipe-title">Pasta Carbonara</span></div>
+                <div class="recipe-meta">   Categorie: Diner | Tijd: 20 min</div>
+                <div class="divider">-------------------------------------------</div>
+                <div class="menu-item"><span class="menu-number">12</span> <span class="recipe-title">Pasta Pesto</span></div>
+                <div class="recipe-meta">   Categorie: Lunch | Tijd: 15 min</div>
+                <div class="divider">-------------------------------------------</div>
+                <br>
+                <div class="success">3 recepten gevonden</div>
+                <br>
+                <div><span class="prompt">Bekijk recept ID (of 0 voor terug):</span> <span class="cursor"></span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; color: #8b949e;">
+        <p>Kookcompas - CLI Recepten Generator met AI</p>
+        <p style="font-size: 12px; margin-top: 10px;">Eindwerk Python - 2024</p>
+    </div>
+
+</body>
+</html>

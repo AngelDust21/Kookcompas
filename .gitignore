@@ -1,0 +1,2 @@
+# Mypy type checker cache
+.mypy_cache/

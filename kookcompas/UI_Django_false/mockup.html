@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#ee7712">
+    <title>KookKompas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'kook': {
+                            50: '#fef7ee',
+                            100: '#fdedd3',
+                            200: '#fad7a6',
+                            300: '#f6b96e',
+                            400: '#f19235',
+                            500: '#ee7712',
+                            600: '#df5c08',
+                            700: '#b94409',
+                        },
+                        'vers': {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body {
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+
+        .page { display: none; }
+        .page.active { display: flex; flex-direction: column; }
+
+        .bottom-nav-item.active {
+            color: #ee7712;
+        }
+        .bottom-nav-item.active svg {
+            stroke: #ee7712;
+        }
+
+        .touch-feedback:active {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+
+        .card-press:active {
+            transform: scale(0.98);
+        }
+
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Safe area for notch phones */
+        .safe-top {
+            padding-top: env(safe-area-inset-top, 12px);
+        }
+
+        .safe-bottom {
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen max-h-screen overflow-hidden">
+
+    <!-- App Container -->
+    <div class="h-screen flex flex-col">
+
+        <!-- HOME PAGE -->
+        <div id="page-home" class="page active flex-1 overflow-hidden">
+            <!-- Header -->
+            <header class="bg-gradient-to-r from-kook-500 to-kook-600 text-white px-5 pt-12 pb-6 safe-top">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-kook-100 text-sm">Welkom bij</p>
+                        <h1 class="text-2xl font-bold">KookKompas</h1>
+                    </div>
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Quick Action -->
+                <button onclick="showPage('genereer')" class="w-full bg-white text-kook-600 py-4 rounded-2xl font-semibold text-lg touch-feedback transition-transform flex items-center justify-center gap-2 shadow-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Genereer Recept
+                </button>
+            </header>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-y-auto hide-scrollbar px-5 py-6 safe-bottom">
+                <!-- Profiel Cards -->
+                <h2 class="text-lg font-semibold text-gray-900 mb-3">Mijn Profiel</h2>
+
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <!-- Allergenen -->
+                    <button onclick="showPage('allergenen')" class="bg-white rounded-2xl p-4 text-left card-press transition-transform shadow-sm border border-gray-100">
+                        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center mb-3">
+                            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
+                        <p class="font-semibold text-gray-900 mb-1">Allergenen</p>
+                        <p class="text-2xl font-bold text-red-500">3</p>
+                    </button>
+
+                    <!-- Dieet -->
+                    <button onclick="showPage('dieet')" class="bg-white rounded-2xl p-4 text-left card-press transition-transform shadow-sm border border-gray-100">
+                        <div class="w-10 h-10 bg-vers-100 rounded-xl flex items-center justify-center mb-3">
+                            <svg class="w-5 h-5 text-vers-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                        </div>
+                        <p class="font-semibold text-gray-900 mb-1">Dieetwensen</p>
+                        <p class="text-2xl font-bold text-vers-500">2</p>
+                    </button>
+                </div>
+
+                <!-- Tags overzicht -->
+                <div class="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-gray-100">
+                    <p class="text-sm text-gray-500 mb-2">Actieve voorkeuren</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-red-50 text-red-600 px-3 py-1.5 rounded-full text-sm font-medium">Noten</span>
+                        <span class="bg-red-50 text-red-600 px-3 py-1.5 rounded-full text-sm font-medium">Gluten</span>
+                        <span class="bg-red-50 text-red-600 px-3 py-1.5 rounded-full text-sm font-medium">Lactose</span>
+                        <span class="bg-vers-50 text-vers-600 px-3 py-1.5 rounded-full text-sm font-medium">Vegetarisch</span>
+                        <span class="bg-vers-50 text-vers-600 px-3 py-1.5 rounded-full text-sm font-medium">Glutenvrij</span>
+                    </div>
+                </div>
+
+                <!-- Recent Recepten -->
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-lg font-semibold text-gray-900">Recente Recepten</h2>
+                    <button onclick="showPage('recepten')" class="text-kook-500 text-sm font-medium">Alles</button>
+                </div>
+
+                <div class="space-y-3">
+                    <button class="w-full bg-white rounded-2xl p-4 flex items-center gap-4 card-press transition-transform shadow-sm border border-gray-100 text-left">
+                        <div class="w-16 h-16 bg-gradient-to-br from-kook-400 to-kook-600 rounded-xl flex-shrink-0"></div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-gray-900 truncate">Mediterrane Pasta</p>
+                            <p class="text-sm text-gray-500">Diner - 25 min</p>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+
+                    <button class="w-full bg-white rounded-2xl p-4 flex items-center gap-4 card-press transition-transform shadow-sm border border-gray-100 text-left">
+                        <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex-shrink-0"></div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-gray-900 truncate">Havermout Bowl</p>
+                            <p class="text-sm text-gray-500">Ontbijt - 10 min</p>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GENEREER PAGE -->
+        <div id="page-genereer" class="page flex-1 overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white px-5 pt-12 pb-4 safe-top border-b border-gray-100">
+                <div class="flex items-center gap-4">
+                    <button onclick="showPage('home')" class="w-10 h-10 flex items-center justify-center -ml-2 touch-feedback">
+                        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <h1 class="text-xl font-bold text-gray-900">Recept Genereren</h1>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-y-auto hide-scrollbar safe-bottom">
+                <!-- Profiel Samenvatting -->
+                <div class="px-5 py-4 bg-gray-50 border-b border-gray-100">
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-lg text-xs font-medium">Noten</span>
+                        <span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-lg text-xs font-medium">Gluten</span>
+                        <span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-lg text-xs font-medium">Lactose</span>
+                        <span class="bg-vers-100 text-vers-700 px-2.5 py-1 rounded-lg text-xs font-medium">Vegetarisch</span>
+                    </div>
+                </div>
+
+                <div class="px-5 py-6">
+                    <!-- Ingredienten Input -->
+                    <div id="input-section">
+                        <label class="block text-base font-semibold text-gray-900 mb-3">
+                            Welke ingredienten heb je?
+                        </label>
+
+                        <!-- Tags -->
+                        <div class="flex flex-wrap gap-2 mb-4" id="tags-container">
+                            <span class="bg-kook-100 text-kook-700 px-4 py-2 rounded-xl text-base font-medium flex items-center gap-2">
+                                Pasta
+                                <button class="hover:text-kook-900 text-xl leading-none">&times;</button>
+                            </span>
+                            <span class="bg-kook-100 text-kook-700 px-4 py-2 rounded-xl text-base font-medium flex items-center gap-2">
+                                Tomaat
+                                <button class="hover:text-kook-900 text-xl leading-none">&times;</button>
+                            </span>
+                            <span class="bg-kook-100 text-kook-700 px-4 py-2 rounded-xl text-base font-medium flex items-center gap-2">
+                                Ui
+                                <button class="hover:text-kook-900 text-xl leading-none">&times;</button>
+                            </span>
+                        </div>
+
+                        <!-- Input -->
+                        <div class="flex gap-2 mb-6">
+                            <input type="text"
+                                   placeholder="Voeg ingredient toe..."
+                                   class="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3.5 text-base focus:outline-none focus:border-kook-500"
+                                   id="ingredient-input">
+                            <button class="bg-kook-500 text-white px-5 rounded-xl font-semibold touch-feedback" onclick="addTag()">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Suggesties -->
+                        <p class="text-sm text-gray-500 mb-2">Suggesties</p>
+                        <div class="flex flex-wrap gap-2 mb-8">
+                            <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium touch-feedback">Knoflook</button>
+                            <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium touch-feedback">Paprika</button>
+                            <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium touch-feedback">Courgette</button>
+                            <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium touch-feedback">Champignons</button>
+                        </div>
+
+                        <!-- Generate Button -->
+                        <button onclick="generateRecept()" class="w-full bg-gradient-to-r from-kook-500 to-kook-600 text-white py-4 rounded-2xl font-bold text-lg touch-feedback shadow-lg shadow-kook-500/30">
+                            Genereer Recept
+                        </button>
+                    </div>
+
+                    <!-- Loading -->
+                    <div id="loading-section" class="hidden py-20 text-center">
+                        <div class="w-20 h-20 bg-kook-100 rounded-full flex items-center justify-center mx-auto mb-6 pulse">
+                            <svg class="w-10 h-10 text-kook-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-2">Even denken...</h2>
+                        <p class="text-gray-500">AI maakt een recept voor je</p>
+                    </div>
+
+                    <!-- Result -->
+                    <div id="result-section" class="hidden slide-up">
+                        <!-- Recept Header -->
+                        <div class="bg-gradient-to-br from-kook-500 to-kook-600 rounded-3xl p-5 text-white mb-4">
+                            <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">Diner</span>
+                            <h2 class="text-2xl font-bold mt-3 mb-2">Mediterrane Pasta met Verse Tomaten</h2>
+                            <div class="flex items-center gap-4 text-kook-100">
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    25 min
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    2 personen
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Ingredienten -->
+                        <div class="bg-white rounded-2xl p-5 mb-4 shadow-sm border border-gray-100">
+                            <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <span class="w-8 h-8 bg-kook-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-kook-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                </span>
+                                Ingredienten
+                            </h3>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2 h-2 bg-kook-400 rounded-full mt-2 flex-shrink-0"></span>
+                                    <span>250g glutenvrije pasta</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2 h-2 bg-kook-400 rounded-full mt-2 flex-shrink-0"></span>
+                                    <span>4 rijpe tomaten, in blokjes</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2 h-2 bg-kook-400 rounded-full mt-2 flex-shrink-0"></span>
+                                    <span>1 ui, fijngesneden</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2 h-2 bg-kook-400 rounded-full mt-2 flex-shrink-0"></span>
+                                    <span>3 teentjes knoflook</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2 h-2 bg-kook-400 rounded-full mt-2 flex-shrink-0"></span>
+                                    <span>2 el olijfolie</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-2 h-2 bg-kook-400 rounded-full mt-2 flex-shrink-0"></span>
+                                    <span>Zout, peper, basilicum</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Bereiding -->
+                        <div class="bg-white rounded-2xl p-5 mb-4 shadow-sm border border-gray-100">
+                            <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <span class="w-8 h-8 bg-vers-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-vers-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                    </svg>
+                                </span>
+                                Bereiding
+                            </h3>
+                            <ol class="space-y-4">
+                                <li class="flex gap-3">
+                                    <span class="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">1</span>
+                                    <span class="text-gray-700 pt-0.5">Kook de pasta volgens de verpakking. Giet af en houd een kopje kookvocht apart.</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">2</span>
+                                    <span class="text-gray-700 pt-0.5">Verhit olijfolie en fruit de ui 3-4 minuten glazig.</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">3</span>
+                                    <span class="text-gray-700 pt-0.5">Voeg knoflook toe, bak 1 minuut mee.</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">4</span>
+                                    <span class="text-gray-700 pt-0.5">Tomaten erbij met zout. Laat 8-10 minuten pruttelen.</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">5</span>
+                                    <span class="text-gray-700 pt-0.5">Meng pasta door de saus. Voeg kookvocht toe indien nodig.</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center text-sm font-bold text-gray-600 flex-shrink-0">6</span>
+                                    <span class="text-gray-700 pt-0.5">Breng op smaak en garneer met basilicum.</span>
+                                </li>
+                            </ol>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-2 gap-3 mb-6">
+                            <button onclick="showToast('Recept opgeslagen')" class="bg-kook-500 text-white py-4 rounded-2xl font-semibold touch-feedback flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                </svg>
+                                Opslaan
+                            </button>
+                            <button onclick="showBoodschappen()" class="bg-gray-100 text-gray-700 py-4 rounded-2xl font-semibold touch-feedback flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                                Boodschappen
+                            </button>
+                        </div>
+
+                        <button onclick="resetGenereer()" class="w-full text-kook-500 font-semibold py-3">
+                            Nieuw recept genereren
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALLERGENEN PAGE -->
+        <div id="page-allergenen" class="page flex-1 overflow-hidden">
+            <header class="bg-white px-5 pt-12 pb-4 safe-top border-b border-gray-100">
+                <div class="flex items-center gap-4">
+                    <button onclick="showPage('home')" class="w-10 h-10 flex items-center justify-center -ml-2 touch-feedback">
+                        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <h1 class="text-xl font-bold text-gray-900">Mijn Allergenen</h1>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-y-auto hide-scrollbar px-5 py-6 safe-bottom">
+                <!-- Huidige allergenen -->
+                <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Actief (3)</h2>
+
+                <div class="space-y-3 mb-8">
+                    <div class="bg-red-50 rounded-2xl p-4 flex items-center justify-between border border-red-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900">Noten</p>
+                                <p class="text-sm text-gray-500">Alle soorten noten</p>
+                            </div>
+                        </div>
+                        <button class="w-10 h-10 flex items-center justify-center text-red-400 touch-feedback">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="bg-red-50 rounded-2xl p-4 flex items-center justify-between border border-red-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-gray-900">Gluten</p>
+                        </div>
+                        <button class="w-10 h-10 flex items-center justify-center text-red-400 touch-feedback">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="bg-red-50 rounded-2xl p-4 flex items-center justify-between border border-red-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-gray-900">Lactose</p>
+                        </div>
+                        <button class="w-10 h-10 flex items-center justify-center text-red-400 touch-feedback">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Toevoegen -->
+                <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Toevoegen</h2>
+
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Ei</button>
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Schaaldieren</button>
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Soja</button>
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Selderij</button>
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Mosterd</button>
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Vis</button>
+                </div>
+
+                <div class="flex gap-2">
+                    <input type="text" placeholder="Anders, namelijk..." class="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3.5 text-base focus:outline-none focus:border-kook-500">
+                    <button class="bg-kook-500 text-white px-6 rounded-xl font-semibold touch-feedback">
+                        Voeg toe
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIEET PAGE -->
+        <div id="page-dieet" class="page flex-1 overflow-hidden">
+            <header class="bg-white px-5 pt-12 pb-4 safe-top border-b border-gray-100">
+                <div class="flex items-center gap-4">
+                    <button onclick="showPage('home')" class="w-10 h-10 flex items-center justify-center -ml-2 touch-feedback">
+                        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <h1 class="text-xl font-bold text-gray-900">Mijn Dieetwensen</h1>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-y-auto hide-scrollbar px-5 py-6 safe-bottom">
+                <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Actief (2)</h2>
+
+                <div class="space-y-3 mb-8">
+                    <div class="bg-vers-50 rounded-2xl p-4 flex items-center justify-between border border-vers-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-vers-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-vers-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-gray-900">Vegetarisch</p>
+                        </div>
+                        <button class="w-10 h-10 flex items-center justify-center text-vers-400 touch-feedback">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="bg-vers-50 rounded-2xl p-4 flex items-center justify-between border border-vers-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-vers-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-vers-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-gray-900">Glutenvrij</p>
+                        </div>
+                        <button class="w-10 h-10 flex items-center justify-center text-vers-400 touch-feedback">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Toevoegen</h2>
+
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Veganistisch</button>
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Keto</button>
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Halal</button>
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Koosjer</button>
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Lactosevrij</button>
+                    <button class="bg-white border-2 border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium touch-feedback">Suikervrij</button>
+                </div>
+
+                <div class="flex gap-2">
+                    <input type="text" placeholder="Anders, namelijk..." class="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3.5 text-base focus:outline-none focus:border-kook-500">
+                    <button class="bg-kook-500 text-white px-6 rounded-xl font-semibold touch-feedback">
+                        Voeg toe
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECEPTEN PAGE -->
+        <div id="page-recepten" class="page flex-1 overflow-hidden">
+            <header class="bg-white px-5 pt-12 pb-4 safe-top border-b border-gray-100">
+                <div class="flex items-center gap-4 mb-4">
+                    <button onclick="showPage('home')" class="w-10 h-10 flex items-center justify-center -ml-2 touch-feedback">
+                        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <h1 class="text-xl font-bold text-gray-900">Mijn Recepten</h1>
+                </div>
+
+                <!-- Search -->
+                <div class="relative">
+                    <input type="text" placeholder="Zoek recept..." class="w-full border-2 border-gray-200 rounded-xl pl-11 pr-4 py-3 text-base focus:outline-none focus:border-kook-500">
+                    <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+
+                <!-- Filter chips -->
+                <div class="flex gap-2 mt-3 overflow-x-auto hide-scrollbar -mx-5 px-5">
+                    <button class="bg-kook-500 text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap touch-feedback">Alles</button>
+                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap touch-feedback">Ontbijt</button>
+                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap touch-feedback">Lunch</button>
+                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap touch-feedback">Diner</button>
+                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap touch-feedback">Snack</button>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-y-auto hide-scrollbar px-5 py-4 safe-bottom">
+                <p class="text-sm text-gray-500 mb-3">3 recepten</p>
+
+                <div class="space-y-3">
+                    <!-- Recept 1 -->
+                    <button class="w-full bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 text-left card-press transition-transform">
+                        <div class="flex">
+                            <div class="w-28 h-28 bg-gradient-to-br from-kook-400 to-kook-600 flex-shrink-0"></div>
+                            <div class="p-4 flex-1">
+                                <span class="bg-kook-100 text-kook-700 px-2 py-0.5 rounded text-xs font-medium">Diner</span>
+                                <h3 class="font-semibold text-gray-900 mt-1 mb-1">Mediterrane Pasta</h3>
+                                <p class="text-sm text-gray-500">25 min - 2 personen</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Recept 2 -->
+                    <button class="w-full bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 text-left card-press transition-transform">
+                        <div class="flex">
+                            <div class="w-28 h-28 bg-gradient-to-br from-amber-400 to-amber-600 flex-shrink-0"></div>
+                            <div class="p-4 flex-1">
+                                <span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs font-medium">Ontbijt</span>
+                                <h3 class="font-semibold text-gray-900 mt-1 mb-1">Havermout Bowl</h3>
+                                <p class="text-sm text-gray-500">10 min - 1 persoon</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Recept 3 -->
+                    <button class="w-full bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 text-left card-press transition-transform">
+                        <div class="flex">
+                            <div class="w-28 h-28 bg-gradient-to-br from-vers-400 to-vers-600 flex-shrink-0"></div>
+                            <div class="p-4 flex-1">
+                                <span class="bg-vers-100 text-vers-700 px-2 py-0.5 rounded text-xs font-medium">Lunch</span>
+                                <h3 class="font-semibold text-gray-900 mt-1 mb-1">Groene Salade</h3>
+                                <p class="text-sm text-gray-500">15 min - 2 personen</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Add new -->
+                    <button onclick="showPage('genereer')" class="w-full bg-gray-50 rounded-2xl p-6 border-2 border-dashed border-gray-200 text-center touch-feedback">
+                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"/>
+                            </svg>
+                        </div>
+                        <p class="font-medium text-gray-600">Nieuw recept</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAVIGATION -->
+        <nav class="bg-white border-t border-gray-200 px-6 py-2 pb-6 flex justify-around items-center fixed bottom-0 left-0 right-0 z-50" style="padding-bottom: max(env(safe-area-inset-bottom), 12px);">
+            <button onclick="showPage('home')" class="bottom-nav-item active flex flex-col items-center py-2 px-4 touch-feedback" data-page="home">
+                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="text-xs mt-1 font-medium text-gray-400">Home</span>
+            </button>
+
+            <button onclick="showPage('genereer')" class="bottom-nav-item flex flex-col items-center py-2 px-4 touch-feedback" data-page="genereer">
+                <div class="w-12 h-12 bg-gradient-to-r from-kook-500 to-kook-600 rounded-full flex items-center justify-center -mt-6 shadow-lg shadow-kook-500/30">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"/>
+                    </svg>
+                </div>
+            </button>
+
+            <button onclick="showPage('recepten')" class="bottom-nav-item flex flex-col items-center py-2 px-4 touch-feedback" data-page="recepten">
+                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                </svg>
+                <span class="text-xs mt-1 font-medium text-gray-400">Recepten</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full font-medium shadow-lg z-50 opacity-0 transition-opacity pointer-events-none">
+        Bericht
+    </div>
+
+    <!-- Boodschappen Modal -->
+    <div id="boodschappen-modal" class="fixed inset-0 bg-black/50 z-50 hidden" onclick="hideBoodschappen()">
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 pb-10 slide-up" onclick="event.stopPropagation()">
+            <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6"></div>
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Boodschappenlijst</h2>
+
+            <div class="space-y-3 mb-6">
+                <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <input type="checkbox" class="w-5 h-5 text-kook-500 rounded">
+                    <span class="text-gray-700">250g glutenvrije pasta</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <input type="checkbox" class="w-5 h-5 text-kook-500 rounded">
+                    <span class="text-gray-700">4 rijpe tomaten</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <input type="checkbox" class="w-5 h-5 text-kook-500 rounded">
+                    <span class="text-gray-700">1 ui</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <input type="checkbox" class="w-5 h-5 text-kook-500 rounded">
+                    <span class="text-gray-700">3 teentjes knoflook</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <input type="checkbox" class="w-5 h-5 text-kook-500 rounded">
+                    <span class="text-gray-700">Olijfolie</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <input type="checkbox" class="w-5 h-5 text-kook-500 rounded">
+                    <span class="text-gray-700">Verse basilicum</span>
+                </label>
+            </div>
+
+            <button onclick="hideBoodschappen()" class="w-full bg-kook-500 text-white py-4 rounded-2xl font-semibold touch-feedback">
+                Sluiten
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pageName).classList.add('active');
+
+            document.querySelectorAll('.bottom-nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.page === pageName) {
+                    item.classList.add('active');
+                }
+            });
+
+            window.scrollTo(0, 0);
+        }
+
+        function generateRecept() {
+            document.getElementById('input-section').classList.add('hidden');
+            document.getElementById('loading-section').classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('loading-section').classList.add('hidden');
+                document.getElementById('result-section').classList.remove('hidden');
+            }, 1500);
+        }
+
+        function resetGenereer() {
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('input-section').classList.remove('hidden');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+        }
+
+        function showBoodschappen() {
+            document.getElementById('boodschappen-modal').classList.remove('hidden');
+        }
+
+        function hideBoodschappen() {
+            document.getElementById('boodschappen-modal').classList.add('hidden');
+        }
+
+        function addTag() {
+            const input = document.getElementById('ingredient-input');
+            if (input.value.trim()) {
+                const container = document.getElementById('tags-container');
+                const tag = document.createElement('span');
+                tag.className = 'bg-kook-100 text-kook-700 px-4 py-2 rounded-xl text-base font-medium flex items-center gap-2 fade-in';
+                tag.innerHTML = `${input.value.trim()}<button class="hover:text-kook-900 text-xl leading-none" onclick="this.parentElement.remove()">&times;</button>`;
+                container.appendChild(tag);
+                input.value = '';
+            }
+        }
+
+        document.getElementById('ingredient-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTag();
+            }
+        });
+    </script>
+
+</body>
+</html>
