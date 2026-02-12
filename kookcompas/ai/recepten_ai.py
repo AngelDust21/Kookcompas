@@ -33,7 +33,7 @@ except ImportError:
         load_dotenv()
 
     ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
-    AI_MODEL = "claude-3-5-haiku-20241022"
+    AI_MODEL = "claude-haiku-4-5-20251001"
     AI_MAX_TOKENS = 1024
 
 
@@ -43,7 +43,7 @@ try:
     ANTHROPIC_BESCHIKBAAR = True
 except ImportError:
     ANTHROPIC_BESCHIKBAAR = False
-    print("⚠️  anthropic library niet gevonden. Installeer met: pip install anthropic")
+    print("anthropic library niet gevonden. Installeer met: pip install anthropic")
 
 
 # CONFIGURATIE CHECK
