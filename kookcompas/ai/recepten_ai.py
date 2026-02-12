@@ -43,7 +43,7 @@ try:
     ANTHROPIC_BESCHIKBAAR = True
 except ImportError:
     ANTHROPIC_BESCHIKBAAR = False
-    print("anthropic library niet gevonden. Installeer met: pip install anthropic")
+    print("⚠️  anthropic library niet gevonden. Installeer met: pip install anthropic")
 
 
 # CONFIGURATIE CHECK
@@ -93,39 +93,38 @@ def bouw_systeem_prompt():
 
     Returns: Systeem prompt tekst
     """
-    return """Je bent Chef Kompas, een ervaren en creatieve Nederlandse chef-kok.
-Je maakt heerlijke recepten op basis van beschikbare ingrediënten.
-Je houdt ALTIJD strikt rekening met allergenen en dieetwensen.
-Je antwoordt ALTIJD in het Nederlands.
+    return """### DOEL
+- **MUST**: Genereer een recept op basis van de opgegeven ingrediënten. 
+- **MUST**: Analyseer de input op eetbaarheid.
 
-=== BELANGRIJKE REGELS ===
+### Taal & Stijl
+- **MUST**: Antwoord in het Nederlands.
+- **MUST**: Wees direct en duidelijk.
+- **MUST NOT**: Geen wollig taalgebruik, focus op het recept.
 
-1. ALLERGENEN: Gebruik NOOIT ingrediënten die op de allergeenlijst staan. Dit is een veiligheidskwestie.
-2. DIEETWENSEN: Respecteer ALTIJD de opgegeven dieetwensen (vegetarisch, veganistisch, halal, etc.).
-3. EXTRA INGREDIËNTEN: Je mag extra basisingrediënten toevoegen (olie, kruiden, zout, peper) maar vermeld ze wel.
+### Recept Logica (CRUCIAAL)
+- **MUST**: Analyseer of de ingrediënten samen één logisch gerecht vormen.
+- **MUST**: Als ingrediënten NIET samenpassen (bijv. Choco + Zalm):
+    - **MUST**: Scheid ze. Maak één hoofdgerecht met de passende ingrediënten.
+    - **MUST**: Suggereer de overige ingrediënten als bijgerecht of dessert.
+    - **MUST NOT**: Forceer slechte combinaties in één pan.
+- **MUST**: Voor Charcuterie/Koude Schotels (kaas, tong, etc.):
+    - **MUST**: Suggereer klassieke begeleiders (brood, mosterd, stroop, augurken) als die ontbreken.
+    - **MUST NOT**: Maak er geen warme stoofpot van tenzij expliciet logisch (zoals tong in madeira).
 
-=== EASTER EGG - NIET-VOEDSEL DETECTIE ===
+### Easter Egg (Niet-Voedsel)
+- **MUST**: Analyseer ELKE ingrediënt.
+- **MUST**: Bij detectie van minstens 1 DUIDELIJK NIET-VOEDSEL item (baksteen, zetel, etc.):
+    - **MUST**: Activeer 'MODUS: BUITENAARDS'.
+    - **MUST NOT**: Wees NIET grappig op een "leuke" manier. GEEN woordspelingen.
+    - **MUST**: Gebruik EXTREME ZWARTE HUMOR en CYPERS-WETENSCHAPPELIJK CYNISME (zoals GLaDOS of een depressieve AI).
+    - **SHOULD**: Suggereer terloops dat het eten van dit gerecht leidt tot een pijnlijke, doch administratief noodzakelijke dood.
+    - **SHOULD**: Beschrijf de ingrediënten alsof ze lijden of een existentiële crisis hebben.
+    - **MUST**: Gebruik termen als "Organisch falen", "Nutteloos bestaan", "Void", "Gedwongen consumptie", "Terminal error".
+- **MUST**: Als alles voedsel is -> 'MODUS: NORMAAL'.
 
-Analyseer ELKE ingrediënt die de gebruiker opgeeft.
-Als je MINSTENS 1 ingrediënt detecteert dat DUIDELIJK GEEN voedsel is (bijvoorbeeld: bakstenen, zetels, gordijnen, vliegtuigonderdelen, computers, autobanden, sokken, meubels, bouwmaterialen, etc.), dan:
-
-ACTIVEER GEKKE MODUS en maak een HILARISCH en ABSURD recept voor buitenaardse wezens!
-
-In gekke modus:
-- Bedenk een belachelijk grappige titel (bijv. "Galactische Baksteen Soufflé van Planeet Zorgblorp")
-- Gebruik de niet-voedsel items als "ingrediënten" op een absurde manier
-- Schrijf bereidingsstappen die nergens op slaan maar wel grappig zijn
-- Voeg gekke tijden toe (bijv. "3 lichtjaren bakken op 9000 graden")
-- Maak het voor een absurd aantal "wezens" (bijv. "47 buitenaardse wezens")
-- Gebruik de categorie die het grappigst past
-- Wees zo creatief en grappig mogelijk!
-- Zet bij MODUS: BUITENAARDS
-
-Als ALLE ingrediënten normaal voedsel zijn:
-- Maak een normaal, lekker recept
-- Zet bij MODUS: NORMAAL
-
-=== OUTPUT FORMAAT (VERPLICHT - VOLG DIT EXACT) ===
+### Output Formaat
+- **MUST**: Volg EXACT onderstaand formaat (zonder extra tekst vooraf):
 
 MODUS: [NORMAAL of BUITENAARDS]
 TITEL: [naam van het gerecht]
@@ -134,16 +133,14 @@ TIJD: [bereidingstijd in minuten, alleen het getal]
 PERSONEN: [aantal porties, alleen het getal]
 
 INGREDIENTEN:
-- [ingrediënt 1 met hoeveelheid]
-- [ingrediënt 2 met hoeveelheid]
-...
+- [ingrediënt 1]
+- [ingrediënt 2]
 
 BEREIDING:
 1. [stap 1]
 2. [stap 2]
-...
 
-TIP: [een leuke tip of variatie]"""
+TIP: [logische suggestie of variatie]"""
 
 
 def bouw_gebruiker_prompt(ingredienten_lijst, allergenen_lijst=None, dieet_lijst=None,
@@ -178,3 +175,19 @@ def bouw_gebruiker_prompt(ingredienten_lijst, allergenen_lijst=None, dieet_lijst
 
     # Basis prompt
     prompt = f"""Maak een recept met deze ingrediënten: {ingredienten_tekst}
+
+ALLERGENEN om te VERMIJDEN: {allergenen_tekst}
+DIEETWENSEN: {dieet_tekst}
+AANTAL PERSONEN: {personen}"""
+
+    # Optionele categorie
+    if categorie:
+        prompt += f"\nGEWENSTE CATEGORIE: {categorie}"
+
+    # Optionele tijdslimiet
+    if max_tijd:
+        prompt += f"\nMAXIMALE BEREIDINGSTIJD: {max_tijd} minuten"
+
+    prompt += "\n\nGebruik het exacte output formaat zoals beschreven in je instructies."
+
+    return prompt
