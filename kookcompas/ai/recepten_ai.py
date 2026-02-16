@@ -79,6 +79,19 @@ def maak_ai_client():
         return None
 
 
+# KLEUREN (ANSI CODES)
+class Kleuren:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
 # PROMPT ENGINEERING
 
 def bouw_systeem_prompt():
@@ -430,40 +443,42 @@ def formatteer_recept(recept):
     if not recept:
         return "Geen recept beschikbaar."
 
+    k = Kleuren
     lijn = "=" * 50
 
-    output = f"\n{lijn}\n"
+    output = f"\n{k.OKCYAN}{lijn}{k.ENDC}\n"
 
     # Easter egg indicator
     if recept.get('is_easter_egg'):
-        output += "BUITENAARDS RECEPT GEDETECTEERD\n"
-        output += f"{lijn}\n"
+        output += f"{k.FAIL}{k.BOLD}BUITENAARDS RECEPT GEDETECTEERD{k.ENDC}\n"
+        output += f"{k.OKCYAN}{lijn}{k.ENDC}\n"
 
-    output += f"  {recept.get('titel', 'Onbekend Recept').upper()}\n"
-    output += f"{lijn}\n"
+    titel = recept.get('titel', 'Onbekend Recept').upper()
+    output += f"  {k.HEADER}{k.BOLD}{titel}{k.ENDC}\n"
+    output += f"{k.OKCYAN}{lijn}{k.ENDC}\n"
     output += f"Categorie:      {recept.get('categorie', 'Onbekend')}\n"
     output += f"Bereidingstijd: {recept.get('bereidingstijd', '?')} minuten\n"
     output += f"Personen:       {recept.get('personen', '?')}\n"
 
-    # Ingrediënten
-    output += f"\n{'─' * 50}\n"
+    # Ingredienten
+    output += f"\n{k.OKGREEN}{'─' * 50}\n"
     output += "INGREDIENTEN:\n"
-    output += f"{'─' * 50}\n"
+    output += f"{'─' * 50}{k.ENDC}\n"
     ingredienten = recept.get('ingredienten', 'Geen ingredienten')
     output += f"{ingredienten}\n"
     
     # Bereiding
-    output += f"\n{'─' * 50}\n"
+    output += f"\n{k.OKBLUE}{'─' * 50}\n"
     output += "BEREIDING:\n"
-    output += f"{'─' * 50}\n"
+    output += f"{'─' * 50}{k.ENDC}\n"
     instructies = recept.get('instructies', 'Geen bereiding')
     output += f"{instructies}\n"
 
     # Tip
     if recept.get('tip'):
-        output += f"\nTIP: {recept['tip']}\n"
+        output += f"\n{k.WARNING}TIP: {recept['tip']}{k.ENDC}\n"
 
-    output += f"\n{lijn}\n"
+    output += f"\n{k.OKCYAN}{lijn}{k.ENDC}\n"
 
     return output
 
